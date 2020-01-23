@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -12,6 +14,8 @@ import static com.example.nightwallpaper.MyApplication.getInstance;
 
 public class MainActivity extends Activity {
     private Switch modeSwitch;
+    private Button saveDayButton;
+    private Button saveNightButton;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     @Override
@@ -21,6 +25,8 @@ public class MainActivity extends Activity {
         sharedPreferences = ((MyApplication)getInstance()).getSharedPreferences();
         editor = ((MyApplication)getInstance()).getEditor();
         modeSwitch = findViewById(R.id.switch_mode);
+        saveDayButton = findViewById(R.id.save_day_button);
+        saveNightButton = findViewById(R.id.save_night_button);
         modeSwitch.setChecked(sharedPreferences.getBoolean("mode",false));
         modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
