@@ -42,5 +42,17 @@ public class MainActivity extends Activity {
                 Log.d("tag", "onCheckedChanged: "+!sharedPreferences.getBoolean("mode",false));
             }
         });
+        saveDayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MyApplication) getInstance()).saveCurrentAsDay();
+            }
+        });
+        saveNightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MyApplication) getInstance()).saveCurrentAsNight();
+            }
+        });
     }
 }

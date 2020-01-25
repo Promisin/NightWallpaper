@@ -39,17 +39,17 @@ public class MyApplication extends Application {
         sharedPreferences = getSharedPreferences("config", MODE_APPEND);
         editor = sharedPreferences.edit();
         editor.apply();
-    }
-
-    private void getPrimaryWallpaper() {
         File dir = new File(fileDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
+    }
+
+    private void getPrimaryWallpaper() {
         Drawable primaryDrawable = wallpaperManager.getDrawable();
         Bitmap primaryBitmap = ((BitmapDrawable) primaryDrawable).getBitmap();
         File dayWallpaper = new File(dayWallpaperPath);
-        if (!dayWallpaper.exists()){
+        if (!dayWallpaper.exists()) {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(dayWallpaper);
                 primaryBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
@@ -113,6 +113,32 @@ public class MyApplication extends Application {
                 }
             }
         }).start();
+    }
+
+    public void saveCurrentAsDay() {
+        Drawable currentDrawable = wallpaperManager.getDrawable();
+        Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
+        savePNG(currentBitmap, dayWallpaperPath);
+    }
+
+    public void saveCurrentAsNight() {
+        Drawable currentDrawable = wallpaperManager.getDrawable();
+        Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
+        savePNG(currentBitmap, nightWallpaperPath);
+    }
+
+    private void savePNG(Bitmap bitmap, String path){
+        File nightWallpaper = new File(path);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(nightWallpaper);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Application getInstance() {
