@@ -25,10 +25,10 @@ public class MyApplication extends Application {
     private SharedPreferences.Editor editor;
     private WallpaperManager wallpaperManager;
     private BroadcastReceiver broadcastReceiver;
-    private String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath()
+    public static String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "NightWallpaper";
-    private String nightWallpaperPath = fileDir + File.separator + "night.png";
-    private String dayWallpaperPath = fileDir + File.separator + "day.png";
+    public static String nightWallpaperPath = fileDir + File.separator + "night.png";
+    public static String dayWallpaperPath = fileDir + File.separator + "day.png";
 
     @SuppressLint("WrongConstant")
     @Override
@@ -115,7 +115,7 @@ public class MyApplication extends Application {
         }).start();
     }
 
-    public void saveCurrentAsDay() {
+    /*public void saveCurrentAsDay() {
         Drawable currentDrawable = wallpaperManager.getDrawable();
         Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
         savePNG(currentBitmap, dayWallpaperPath);
@@ -139,7 +139,7 @@ public class MyApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public static Application getInstance() {
         return myApplication;
@@ -151,6 +151,10 @@ public class MyApplication extends Application {
 
     public SharedPreferences.Editor getEditor() {
         return editor;
+    }
+
+    public WallpaperManager getWallpaperManager() {
+        return wallpaperManager;
     }
 
 }

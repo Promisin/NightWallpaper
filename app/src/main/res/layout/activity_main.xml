@@ -58,4 +58,26 @@
         android:text="保存当前壁纸(夜间)"
         android:textColor="@drawable/button_text_color"/>
 
+    <ImageView
+        android:id="@+id/loading_anim_imv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/save_day_button"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/loading"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/finish_anim_imv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintEnd_toEndOf="@id/loading_anim_imv"
+        app:layout_constraintStart_toStartOf="@id/loading_anim_imv"
+        app:layout_constraintTop_toTopOf="@id/loading_anim_imv"
+        app:layout_constraintBottom_toBottomOf="@+id/loading_anim_imv"
+        android:src="@drawable/finish"
+        android:visibility="invisible"/>
+
 </android.support.constraint.ConstraintLayout>
