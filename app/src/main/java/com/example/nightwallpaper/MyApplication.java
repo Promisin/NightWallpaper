@@ -3,7 +3,6 @@ package com.example.nightwallpaper;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.WallpaperManager;
-import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +23,6 @@ public class MyApplication extends Application {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private WallpaperManager wallpaperManager;
-    private BroadcastReceiver broadcastReceiver;
     public static String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "NightWallpaper";
     public static String nightWallpaperPath = fileDir + File.separator + "night.png";
@@ -114,32 +112,6 @@ public class MyApplication extends Application {
             }
         }).start();
     }
-
-    /*public void saveCurrentAsDay() {
-        Drawable currentDrawable = wallpaperManager.getDrawable();
-        Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
-        savePNG(currentBitmap, dayWallpaperPath);
-    }
-
-    public void saveCurrentAsNight() {
-        Drawable currentDrawable = wallpaperManager.getDrawable();
-        Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
-        savePNG(currentBitmap, nightWallpaperPath);
-    }
-
-    private void savePNG(Bitmap bitmap, String path){
-        File nightWallpaper = new File(path);
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(nightWallpaper);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public static Application getInstance() {
         return myApplication;
