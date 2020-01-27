@@ -16,8 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MyApplication extends Application {
-    final private boolean DAY_MODE = false;
-    final private boolean NIGHT_MODE = true;
     private static Application myApplication;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
