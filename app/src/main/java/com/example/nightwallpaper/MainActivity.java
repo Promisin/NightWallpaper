@@ -25,9 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static com.example.nightwallpaper.MyApplication.dayWallpaperPath;
 import static com.example.nightwallpaper.MyApplication.getInstance;
-import static com.example.nightwallpaper.MyApplication.nightWallpaperPath;
 
 public class MainActivity extends Activity {
     private Switch modeSwitch;
@@ -121,7 +119,7 @@ public class MainActivity extends Activity {
             public void run() {
                 Drawable currentDrawable = wallpaperManager.getDrawable();
                 Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
-                savePNG(currentBitmap, dayWallpaperPath);
+                savePNG(currentBitmap, ((MyApplication)getInstance()).getDayWallpaperPath());
             }
         }).start();
     }
@@ -132,7 +130,7 @@ public class MainActivity extends Activity {
             public void run() {
                 Drawable currentDrawable = wallpaperManager.getDrawable();
                 Bitmap currentBitmap = ((BitmapDrawable) currentDrawable).getBitmap();
-                savePNG(currentBitmap, nightWallpaperPath);
+                savePNG(currentBitmap, ((MyApplication)getInstance()).getNightWallpaperPath());
             }
         }).start();
     }

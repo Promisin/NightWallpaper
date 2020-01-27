@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,10 +22,8 @@ public class MyApplication extends Application {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private WallpaperManager wallpaperManager;
-    public static String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath()
-            + File.separator + "NightWallpaper";
-    public static String nightWallpaperPath = fileDir + File.separator + "night.png";
-    public static String dayWallpaperPath = fileDir + File.separator + "day.png";
+    private String nightWallpaperPath;
+    private String dayWallpaperPath;
 
     @SuppressLint("WrongConstant")
     @Override
@@ -37,10 +34,9 @@ public class MyApplication extends Application {
         sharedPreferences = getSharedPreferences("config", MODE_APPEND);
         editor = sharedPreferences.edit();
         editor.apply();
-        File dir = new File(fileDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        FilePathUtils fpu = new FilePathUtils(getApplicationContext());
+        nightWallpaperPath = fpu.getNightWallpaperPath();
+        dayWallpaperPath = fpu.getDayWallpaperPath();
     }
 
     private void getPrimaryWallpaper() {
@@ -67,10 +63,6 @@ public class MyApplication extends Application {
             public void run() {
                 getPrimaryWallpaper();
                 try {
-                    File dir = new File(fileDir);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
                     File nightWallpaper = new File(nightWallpaperPath);
                     if (nightWallpaper.exists()) {
                         Bitmap nightBitmap = BitmapFactory.decodeStream(new FileInputStream(nightWallpaper));
@@ -95,10 +87,6 @@ public class MyApplication extends Application {
             @Override
             public void run() {
                 try {
-                    File dir = new File(fileDir);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
                     File dayWallpaper = new File(dayWallpaperPath);
                     if (dayWallpaper.exists()) {
                         Bitmap dayBitmap = BitmapFactory.decodeStream(new FileInputStream(dayWallpaper));
@@ -127,6 +115,14 @@ public class MyApplication extends Application {
 
     public WallpaperManager getWallpaperManager() {
         return wallpaperManager;
+    }
+
+    public String getNightWallpaperPath() {
+        return nightWallpaperPath;
+    }
+
+    public String getDayWallpaperPath() {
+        return dayWallpaperPath;
     }
 
 }
