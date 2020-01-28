@@ -56,6 +56,8 @@ public class MyApplication extends Application {
     }
 
     public void setNightWallpaper() {
+        editor.putBoolean("mode", true);
+        editor.apply();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -81,6 +83,8 @@ public class MyApplication extends Application {
     }
 
     public void setDayWallpaper() {
+        editor.putBoolean("mode", false);
+        editor.apply();
         new Thread(new Runnable() {
             @Override
             public void run() {

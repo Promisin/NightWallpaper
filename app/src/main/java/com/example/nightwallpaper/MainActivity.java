@@ -36,7 +36,6 @@ public class MainActivity extends Activity {
     private Button saveDayButton;
     private Button saveNightButton;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private WallpaperManager wallpaperManager;
     private ImageView loadingAnimImv;
     private ImageView finishAnimImv;
@@ -74,26 +73,20 @@ public class MainActivity extends Activity {
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 10);
         }
         sharedPreferences = ((MyApplication)getInstance()).getSharedPreferences();
-        editor = ((MyApplication)getInstance()).getEditor();
         wallpaperManager = ((MyApplication) getInstance()).getWallpaperManager();
         modeSwitch = findViewById(R.id.switch_mode);
         saveDayButton = findViewById(R.id.save_day_button);
         saveNightButton = findViewById(R.id.save_night_button);
-        Configuration configuration = getResources().getConfiguration();
-        int mSysThemeConfig = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        modeSwitch.setChecked(mSysThemeConfig == Configuration.UI_MODE_NIGHT_YES);
+        modeSwitch.setChecked(sharedPreferences.getBoolean("mode", false));
         modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editor.putBoolean("mode",!sharedPreferences.getBoolean("mode",false));
-                editor.apply();
-                if (sharedPreferences.getBoolean("mode",false)){
+                if (isChecked){
                     ((MyApplication)getInstance()).setNightWallpaper();
                 }
                 else{
                     ((MyApplication)getInstance()).setDayWallpaper();
                 }
-                Log.d("tag", "onCheckedChanged: "+!sharedPreferences.getBoolean("mode",false));
             }
         });
         saveDayButton.setOnClickListener(new View.OnClickListener() {
@@ -119,9 +112,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Configuration configuration = getResources().getConfiguration();
-        int mSysThemeConfig = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        modeSwitch.setChecked(mSysThemeConfig == Configuration.UI_MODE_NIGHT_YES);
+        modeSwitch.setChecked(sharedPreferences.getBoolean("mode", false));
     }
 
     @Override
