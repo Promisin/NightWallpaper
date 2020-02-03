@@ -103,6 +103,9 @@ public class MyApplication extends Application {
         }).start();
     }
 
+    public boolean getState(){
+        return sharedPreferences.getBoolean("mode", false);
+    }
     public static Application getInstance() {
         return myApplication;
     }

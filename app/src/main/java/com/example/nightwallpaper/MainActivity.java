@@ -35,7 +35,6 @@ public class MainActivity extends Activity {
     private Switch modeSwitch;
     private Button saveDayButton;
     private Button saveNightButton;
-    private SharedPreferences sharedPreferences;
     private WallpaperManager wallpaperManager;
     private ImageView loadingAnimImv;
     private ImageView finishAnimImv;
@@ -72,12 +71,11 @@ public class MainActivity extends Activity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 10);
         }
-        sharedPreferences = ((MyApplication)getInstance()).getSharedPreferences();
         wallpaperManager = ((MyApplication) getInstance()).getWallpaperManager();
         modeSwitch = findViewById(R.id.switch_mode);
         saveDayButton = findViewById(R.id.save_day_button);
         saveNightButton = findViewById(R.id.save_night_button);
-        modeSwitch.setChecked(sharedPreferences.getBoolean("mode", false));
+        modeSwitch.setChecked(((MyApplication)getInstance()).getState());
         modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -112,7 +110,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        modeSwitch.setChecked(sharedPreferences.getBoolean("mode", false));
+        modeSwitch.setChecked(((MyApplication)getInstance()).getState());
     }
 
     @Override

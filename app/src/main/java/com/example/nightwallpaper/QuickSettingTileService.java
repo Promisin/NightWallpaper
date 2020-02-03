@@ -12,18 +12,17 @@ import static com.example.nightwallpaper.MyApplication.getInstance;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class QuickSettingTileService extends TileService {
     private static String TAG = "NightWallpaper";
-    private SharedPreferences sharedPreferences = ((MyApplication)getInstance()).getSharedPreferences();
     private SharedPreferences.Editor editor = ((MyApplication)getInstance()).getEditor();
     //添加快捷开关
     @Override
     public void onTileAdded() {
         super.onTileAdded();
         Tile tile = getQsTile();
-        if (!sharedPreferences.getBoolean("mode",false)){
-            tile.setState(Tile.STATE_INACTIVE);
+        if (((MyApplication)getInstance()).getState()){
+            tile.setState(Tile.STATE_ACTIVE);
         }
         else {
-            tile.setState(Tile.STATE_ACTIVE);
+            tile.setState(Tile.STATE_INACTIVE);
         }
         tile.updateTile();
         Log.d(TAG, "onTileAdded: ");
@@ -62,11 +61,11 @@ public class QuickSettingTileService extends TileService {
     @Override
     public void onStartListening () {
         Tile tile = getQsTile();
-        if (!sharedPreferences.getBoolean("mode",false)){
-            tile.setState(Tile.STATE_INACTIVE);
+        if (((MyApplication)getInstance()).getState()){
+            tile.setState(Tile.STATE_ACTIVE);
         }
         else {
-            tile.setState(Tile.STATE_ACTIVE);
+            tile.setState(Tile.STATE_INACTIVE);
         }
         tile.updateTile();
         Log.d(TAG, "onStartListening: ");
