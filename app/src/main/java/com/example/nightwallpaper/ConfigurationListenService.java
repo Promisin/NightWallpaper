@@ -46,7 +46,7 @@ public class ConfigurationListenService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         NotificationChannel channel = new NotificationChannel(
-                CHANNEL_ID,CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                CHANNEL_ID,CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
         channel.setDescription(CHANNEL_DESCRIPTION);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         channel.setSound(null,null);
@@ -64,8 +64,9 @@ public class ConfigurationListenService extends Service {
                                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                         0))
                 .setWhen(System.currentTimeMillis())
-                .setContent(viewNoti);
-        startForeground(NOTIFICATION_ID,builder.build());
+                .setContent(viewNoti)
+                .setPriority(NotificationCompat.PRIORITY_MIN);
+        startForeground(NOTIFICATION_ID, builder.build());
         Log.d(TAG, "onStartCommand: ");
         return Service.START_STICKY;
     }
@@ -80,8 +81,6 @@ public class ConfigurationListenService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "onReceive: "+intent.getAction());
-            viewNoti.setTextViewText(R.id.tvState,
-                    ((MyApplication)getInstance()).getState()?"夜":"昼");
             builder.setContent(viewNoti)
                     .setWhen(System.currentTimeMillis());
             Configuration configuration = getResources().getConfiguration();
@@ -89,10 +88,14 @@ public class ConfigurationListenService extends Service {
             switch (mSysThemeConfig){
                 case Configuration.UI_MODE_NIGHT_YES:
                     ((MyApplication)getInstance()).setNightWallpaper();
+                    viewNoti.setTextViewText(R.id.tvState,
+                            ((MyApplication)getInstance()).getState()?"夜":"昼");
                     manager.notify(NOTIFICATION_ID, builder.build());
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
                     ((MyApplication)getInstance()).setDayWallpaper();
+                    viewNoti.setTextViewText(R.id.tvState,
+                            ((MyApplication)getInstance()).getState()?"夜":"昼");
                     manager.notify(NOTIFICATION_ID, builder.build());
                     break;
             }
