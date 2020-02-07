@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.util.Log;
 
 import static com.example.nightwallpaper.MyApplication.getInstance;

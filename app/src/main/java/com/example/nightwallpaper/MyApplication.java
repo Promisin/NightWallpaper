@@ -3,6 +3,7 @@ package com.example.nightwallpaper;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.WallpaperManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +23,8 @@ public class MyApplication extends Application {
     private WallpaperManager wallpaperManager;
     private String nightWallpaperPath;
     private String dayWallpaperPath;
+    private boolean isForeground;
+    public static boolean hasChanged;
 
     @SuppressLint("WrongConstant")
     @Override
@@ -35,6 +38,15 @@ public class MyApplication extends Application {
         FilePathUtils fpu = new FilePathUtils(getApplicationContext());
         nightWallpaperPath = fpu.getNightWallpaperPath();
         dayWallpaperPath = fpu.getDayWallpaperPath();
+        Intent intent = new Intent(this, ConfigurationListenService.class);
+        startService(intent);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Intent intent = new Intent(this, ConfigurationListenService.class);
+        stopService(intent);
     }
 
     private void getPrimaryWallpaper() {
@@ -106,12 +118,9 @@ public class MyApplication extends Application {
     public boolean getState(){
         return sharedPreferences.getBoolean("mode", false);
     }
+
     public static Application getInstance() {
         return myApplication;
-    }
-
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
     }
 
     public SharedPreferences.Editor getEditor() {
@@ -128,6 +137,14 @@ public class MyApplication extends Application {
 
     public String getDayWallpaperPath() {
         return dayWallpaperPath;
+    }
+
+    public boolean isForeground() {
+        return isForeground;
+    }
+
+    public void setForeground(boolean foreground) {
+        isForeground = foreground;
     }
 
 }

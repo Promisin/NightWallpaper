@@ -3,8 +3,10 @@ package com.example.nightwallpaper;
 import android.Manifest;
 import android.app.Activity;
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -13,8 +15,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -30,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static com.example.nightwallpaper.MyApplication.getInstance;
+import static com.example.nightwallpaper.MyApplication.hasChanged;
 
 public class MainActivity extends Activity {
     private Switch modeSwitch;
@@ -44,6 +48,7 @@ public class MainActivity extends Activity {
                                     Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int START_LOADING = 0x01;
     private static final int STOP_LOADING = 0x02;
+    private static final String TAG = "MainActivity";
     private Handler animHandler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -66,11 +71,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate: ");
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         if (ActivityCompat.checkSelfPermission(
                 MainActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this, permissions, 10);
         }
+        hasChanged = false;
         wallpaperManager = ((MyApplication) getInstance()).getWallpaperManager();
         modeSwitch = findViewById(R.id.switch_mode);
         saveDayButton = findViewById(R.id.save_day_button);
@@ -103,15 +111,59 @@ public class MainActivity extends Activity {
         loadingAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate_anim);
         finishAnimImv = findViewById(R.id.finish_anim_imv);
         finishAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.finish_anim);
-        Intent intent = new Intent(this, ConfigurationListenService.class);
-        startService(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.CONFIGURATION_CHANGED");
+        registerReceiver(configReceiver, filter);
+        ((MyApplication)getInstance()).setForeground(true);
         modeSwitch.setChecked(((MyApplication)getInstance()).getState());
+        if (hasChanged){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            Intent intentRecreate = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intentRecreate);
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+            finish();
+        }
+        Log.d(TAG, "onResume: ");
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((MyApplication)getInstance()).setForeground(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+        unregisterReceiver(configReceiver);
+    }
+
+    private BroadcastReceiver configReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive: ");
+            if (!((MyApplication)getInstance()).isForeground()){
+                hasChanged = !hasChanged;
+                return;
+            }
+            Configuration configuration = getResources().getConfiguration();
+            int mSysThemeConfig = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            if (mSysThemeConfig==Configuration.UI_MODE_NIGHT_YES ||
+                    mSysThemeConfig==Configuration.UI_MODE_NIGHT_NO){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                Intent intentRecreate = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intentRecreate);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
+            }
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

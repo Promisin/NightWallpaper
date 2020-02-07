@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">#111111</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimary">#FF00BEAB</item>
+    </style>
+</resources>

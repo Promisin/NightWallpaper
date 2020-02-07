@@ -11,7 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -81,23 +81,23 @@ public class ConfigurationListenService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "onReceive: "+intent.getAction());
-            builder.setContent(viewNoti)
-                    .setWhen(System.currentTimeMillis());
             Configuration configuration = getResources().getConfiguration();
             int mSysThemeConfig = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            switch (mSysThemeConfig){
-                case Configuration.UI_MODE_NIGHT_YES:
-                    ((MyApplication)getInstance()).setNightWallpaper();
-                    viewNoti.setTextViewText(R.id.tvState,
-                            ((MyApplication)getInstance()).getState()?"夜":"昼");
-                    manager.notify(NOTIFICATION_ID, builder.build());
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    ((MyApplication)getInstance()).setDayWallpaper();
-                    viewNoti.setTextViewText(R.id.tvState,
-                            ((MyApplication)getInstance()).getState()?"夜":"昼");
-                    manager.notify(NOTIFICATION_ID, builder.build());
-                    break;
+            if (mSysThemeConfig==Configuration.UI_MODE_NIGHT_YES ||
+                    mSysThemeConfig==Configuration.UI_MODE_NIGHT_NO){
+                switch (mSysThemeConfig){
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        ((MyApplication)getInstance()).setNightWallpaper();
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        ((MyApplication)getInstance()).setDayWallpaper();
+                        break;
+                }
+                builder.setContent(viewNoti)
+                        .setWhen(System.currentTimeMillis());
+                viewNoti.setTextViewText(R.id.tvState,
+                        ((MyApplication)getInstance()).getState()?"夜":"昼");
+                manager.notify(NOTIFICATION_ID, builder.build());
             }
         }
     };
