@@ -10,6 +10,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,13 +26,17 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatDelegate;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -42,6 +53,7 @@ public class MainActivity extends Activity {
     private WallpaperManager wallpaperManager;
     private ImageView loadingAnimImv;
     private ImageView finishAnimImv;
+    private TextView tvGuide;
     private Animation loadingAnimation;
     private Animation finishAnimation;
     private String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -111,6 +123,36 @@ public class MainActivity extends Activity {
         loadingAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate_anim);
         finishAnimImv = findViewById(R.id.finish_anim_imv);
         finishAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.finish_anim);
+        tvGuide = findViewById(R.id.tv_guide);
+        tvGuide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGuide();
+            }
+        });
+    }
+
+    private void showGuide() {
+        final FrameLayout decorView = (FrameLayout)MainActivity.this.getWindow().getDecorView();
+        View rootView = findViewById(android.R.id.content);
+        int width = rootView.getWidth();
+        int height = rootView.getHeight();
+        final GuideView guideView = new GuideView(MainActivity.this);
+        decorView.addView(guideView);
+        ViewGroup.LayoutParams layoutParams = guideView.getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = height;
+        guideView.setLayoutParams(layoutParams);
+        guideView.setClickable(true);
+        guideView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guideView.invalidate();
+                if (guideView.pageNum==4){
+                    decorView.removeView(guideView);
+                }
+            }
+        });
     }
 
     @Override
@@ -175,6 +217,49 @@ public class MainActivity extends Activity {
             else {
                 Toast.makeText(MainActivity.this, "权限请求失败", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private class GuideView extends View{
+        private Paint paint;
+        private Rect rect;
+        private RectF rectF;
+        private int pageNum;
+        private final int margin = 50;
+        private final String[] instructions = {"切换昼/夜壁纸",
+        "保存当前壁纸为日间壁纸", "保存当前壁纸为夜间壁纸", "壁纸模式会跟随系统夜间模式切换"};
+        private final View[] views = {modeSwitch, saveDayButton, saveNightButton};
+        PorterDuffXfermode porterDuffXfermode;
+        public GuideView(Context context) {
+            super(context);
+            paint = new Paint();
+            rect = new Rect();
+            rectF = new RectF();
+            pageNum = 0;
+            porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            canvas.saveLayer(0,0,getWidth(),getHeight(),null);
+            canvas.drawARGB(200, 0, 0, 0 );
+            paint.setTextSize(60);
+            if (pageNum<3){
+                views[pageNum].getGlobalVisibleRect(rect);
+                rectF.set(rect);
+                paint.setXfermode(porterDuffXfermode);
+                canvas.drawRoundRect(rectF, 10, 10, paint);
+                paint.setXfermode(null);
+                paint.setColor(Color.WHITE);
+                canvas.drawText(instructions[pageNum], margin, getHeight()-margin, paint);
+
+            }
+            else if(pageNum<4){
+                paint.setColor(Color.WHITE);
+                canvas.drawText(instructions[pageNum], margin, getHeight()-margin, paint);
+            }
+            pageNum++;
         }
     }
 

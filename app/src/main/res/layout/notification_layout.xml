@@ -20,7 +20,7 @@
         android:layout_weight="6"
         android:gravity="start"
         android:paddingVertical="8dp"
-        android:text="壁纸模式："
+        android:text="@string/notification_text_item"
         android:textColor="@color/colorPrimaryDark"
         android:autoSizeTextType="uniform"/>
     <TextView

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">NightWallpaper</string>
+    <string name="guide_text"><u>使用说明 </u>></string>
+    <string name="button_text_day">保存当前壁纸(白天)</string>
+    <string name="button_text_night">保存当前壁纸(夜间)</string>
+    <string name="switch_text_on">夜</string>
+    <string name="switch_text_off">昼</string>
+    <string name="notification_text_item">壁纸模式：</string>
 </resources>
