@@ -1,4 +1,4 @@
-package com.example.nightwallpaper;
+package com.ypp.nightwallpaper;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,11 +22,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatDelegate;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -39,17 +34,22 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static com.example.nightwallpaper.MyApplication.getInstance;
-import static com.example.nightwallpaper.MyApplication.hasChanged;
+import static com.ypp.nightwallpaper.MyApplication.getInstance;
+import static com.ypp.nightwallpaper.MyApplication.hasChanged;
 
 public class MainActivity extends Activity {
     private Switch modeSwitch;
     private Button saveDayButton;
     private Button saveNightButton;
+    private Button stopButton;
     private WallpaperManager wallpaperManager;
     private ImageView loadingAnimImv;
     private ImageView finishAnimImv;
@@ -60,7 +60,6 @@ public class MainActivity extends Activity {
                                     Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int START_LOADING = 0x01;
     private static final int STOP_LOADING = 0x02;
-    private static final String TAG = "MainActivity";
     private Handler animHandler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -83,7 +82,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: ");
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         if (ActivityCompat.checkSelfPermission(
                 MainActivity.this,
@@ -95,6 +93,7 @@ public class MainActivity extends Activity {
         modeSwitch = findViewById(R.id.switch_mode);
         saveDayButton = findViewById(R.id.save_day_button);
         saveNightButton = findViewById(R.id.save_night_button);
+        stopButton = findViewById(R.id.stop_button);
         modeSwitch.setChecked(((MyApplication)getInstance()).getState());
         modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -117,6 +116,15 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 saveCurrentAsNight();
+            }
+        });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ConfigurationListenService.class);
+                stopService(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(0);
             }
         });
         loadingAnimImv = findViewById(R.id.loading_anim_imv);
@@ -148,7 +156,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 guideView.invalidate();
-                if (guideView.pageNum==4){
+                if (guideView.pageNum == 5) {
                     decorView.removeView(guideView);
                 }
             }
@@ -170,7 +178,6 @@ public class MainActivity extends Activity {
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             finish();
         }
-        Log.d(TAG, "onResume: ");
     }
 
     @Override
@@ -182,14 +189,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
         unregisterReceiver(configReceiver);
     }
 
     private BroadcastReceiver configReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive: ");
             if (!((MyApplication)getInstance()).isForeground()){
                 hasChanged = !hasChanged;
                 return;
@@ -227,8 +232,8 @@ public class MainActivity extends Activity {
         private int pageNum;
         private final int margin = 50;
         private final String[] instructions = {"切换昼/夜壁纸",
-        "保存当前壁纸为日间壁纸", "保存当前壁纸为夜间壁纸", "壁纸模式会跟随系统夜间模式切换"};
-        private final View[] views = {modeSwitch, saveDayButton, saveNightButton};
+                "保存当前壁纸为日间壁纸", "保存当前壁纸为夜间壁纸", "停止服务按钮", "壁纸模式会跟随系统夜间模式切换"};
+        private final View[] views = {modeSwitch, saveDayButton, saveNightButton, stopButton};
         PorterDuffXfermode porterDuffXfermode;
         public GuideView(Context context) {
             super(context);
@@ -244,18 +249,17 @@ public class MainActivity extends Activity {
             super.onDraw(canvas);
             canvas.saveLayer(0,0,getWidth(),getHeight(),null);
             canvas.drawARGB(200, 0, 0, 0 );
-            paint.setTextSize(60);
-            if (pageNum<3){
+            paint.setTextSize(50);
+            if (pageNum < 4) {
                 views[pageNum].getGlobalVisibleRect(rect);
                 rectF.set(rect);
                 paint.setXfermode(porterDuffXfermode);
                 canvas.drawRoundRect(rectF, 10, 10, paint);
                 paint.setXfermode(null);
                 paint.setColor(Color.WHITE);
-                canvas.drawText(instructions[pageNum], margin, getHeight()-margin, paint);
+                canvas.drawText(instructions[pageNum], margin, 2 * margin, paint);
 
-            }
-            else if(pageNum<4){
+            } else if (pageNum < 5) {
                 paint.setColor(Color.WHITE);
                 canvas.drawText(instructions[pageNum], margin, getHeight()-margin, paint);
             }

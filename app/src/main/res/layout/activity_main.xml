@@ -41,7 +41,7 @@
         android:layout_marginTop="10dp"
         android:paddingHorizontal="10dp"
         app:layout_constraintTop_toBottomOf="@id/switch_mode"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv"
         android:background="@drawable/button_bg"
         android:text="@string/button_text_day"
         android:textColor="@drawable/button_text_color"/>
@@ -57,6 +57,17 @@
         android:background="@drawable/button_bg"
         android:text="@string/button_text_night"
         android:textColor="@drawable/button_text_color"/>
+
+    <Button
+        android:id="@+id/stop_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:text="X"
+        android:paddingHorizontal="5dp"
+        android:background="@drawable/button_bg"
+        android:textColor="@drawable/button_text_color"
+        app:layout_constraintStart_toStartOf="@id/tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_guide" />
 
     <ImageView
         android:id="@+id/loading_anim_imv"

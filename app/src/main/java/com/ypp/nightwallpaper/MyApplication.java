@@ -1,4 +1,4 @@
-package com.example.nightwallpaper;
+package com.ypp.nightwallpaper;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +45,7 @@ public class MyApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        Log.d("TAG", "onTerminate: ");
         Intent intent = new Intent(this, ConfigurationListenService.class);
         stopService(intent);
     }

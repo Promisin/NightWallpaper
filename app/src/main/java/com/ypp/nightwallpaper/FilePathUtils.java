@@ -1,4 +1,4 @@
-package com.example.nightwallpaper;
+package com.ypp.nightwallpaper;
 
 import android.content.Context;
 import android.os.Build;

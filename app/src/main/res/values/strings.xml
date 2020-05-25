@@ -6,4 +6,5 @@
     <string name="switch_text_on">夜</string>
     <string name="switch_text_off">昼</string>
     <string name="notification_text_item">壁纸模式：</string>
+    <string name="stop_service">停止服务</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.nightwallpaper;
+package com.ypp.nightwallpaper;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,11 +11,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.IBinder;
-import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import static com.example.nightwallpaper.MyApplication.getInstance;
+import androidx.core.app.NotificationCompat;
+
+import static com.ypp.nightwallpaper.MyApplication.getInstance;
 
 public class ConfigurationListenService extends Service {
     private final String CHANNEL_ID = "onConfigurationChangeListenService";

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.nightwallpaper">
+    package="com.ypp.nightwallpaper">
 
     <dist:module dist:instant="true" />
 
@@ -15,7 +15,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.ypp.nightwallpaper.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,12 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".ConfigurationListenService"
+            android:name="com.ypp.nightwallpaper.ConfigurationListenService"
             android:enabled="true"
             android:exported="true"></service>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.ypp.nightwallpaper.MainActivity"
             android:configChanges="uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +38,7 @@
         </activity>
 
         <service
-            android:name=".QuickSettingTileService"
+            android:name="com.ypp.nightwallpaper.QuickSettingTileService"
             android:icon="@drawable/qst_icon"
             android:label="切换壁纸"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
