@@ -76,7 +76,6 @@ public class QuickSettingTileService extends TileService {
     // 在onTileRemoved移除之前也会调用移除
     @Override
     public void onStopListening () {
-
         Log.d(TAG, "onStopListening: ");
     }
 }

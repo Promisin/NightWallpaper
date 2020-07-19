@@ -38,8 +38,6 @@ public class MyApplication extends Application {
         FilePathUtils fpu = new FilePathUtils(getApplicationContext());
         nightWallpaperPath = fpu.getNightWallpaperPath();
         dayWallpaperPath = fpu.getDayWallpaperPath();
-        Intent intent = new Intent(this, ConfigurationListenService.class);
-        startService(intent);
     }
 
     @Override
@@ -51,10 +49,10 @@ public class MyApplication extends Application {
     }
 
     private void getPrimaryWallpaper() {
-        Drawable primaryDrawable = wallpaperManager.getDrawable();
-        Bitmap primaryBitmap = ((BitmapDrawable) primaryDrawable).getBitmap();
         File dayWallpaper = new File(dayWallpaperPath);
         if (!dayWallpaper.exists()) {
+            Drawable primaryDrawable = wallpaperManager.getDrawable();
+            Bitmap primaryBitmap = ((BitmapDrawable) primaryDrawable).getBitmap();
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(dayWallpaper);
                 primaryBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
@@ -114,8 +112,12 @@ public class MyApplication extends Application {
         }).start();
     }
 
-    public boolean getState(){
+    public boolean getState() {
         return sharedPreferences.getBoolean("mode", false);
+    }
+
+    public boolean getServiceState() {
+        return sharedPreferences.getBoolean("serviceMode", false);
     }
 
     public static Application getInstance() {

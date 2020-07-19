@@ -47,9 +47,9 @@ import static com.ypp.nightwallpaper.MyApplication.hasChanged;
 
 public class MainActivity extends Activity {
     private Switch modeSwitch;
+    private Switch serviceSwitch;
     private Button saveDayButton;
     private Button saveNightButton;
-    private Button stopButton;
     private WallpaperManager wallpaperManager;
     private ImageView loadingAnimImv;
     private ImageView finishAnimImv;
@@ -91,18 +91,30 @@ public class MainActivity extends Activity {
         hasChanged = false;
         wallpaperManager = ((MyApplication) getInstance()).getWallpaperManager();
         modeSwitch = findViewById(R.id.switch_mode);
+        serviceSwitch = findViewById(R.id.switch_service);
         saveDayButton = findViewById(R.id.save_day_button);
         saveNightButton = findViewById(R.id.save_night_button);
-        stopButton = findViewById(R.id.stop_button);
         modeSwitch.setChecked(((MyApplication)getInstance()).getState());
         modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    ((MyApplication)getInstance()).setNightWallpaper();
+                if (isChecked) {
+                    ((MyApplication) getInstance()).setNightWallpaper();
+                } else {
+                    ((MyApplication) getInstance()).setDayWallpaper();
                 }
-                else{
-                    ((MyApplication)getInstance()).setDayWallpaper();
+            }
+        });
+        serviceSwitch.setChecked(((MyApplication) getInstance()).getServiceState());
+        serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ((MyApplication) getInstance()).getEditor().putBoolean("serviceMode", isChecked).apply();
+                Intent intent = new Intent(MainActivity.this, ConfigurationListenService.class);
+                if (isChecked) {
+                    startService(intent);
+                } else {
+                    stopService(intent);
                 }
             }
         });
@@ -116,15 +128,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 saveCurrentAsNight();
-            }
-        });
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ConfigurationListenService.class);
-                stopService(intent);
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(0);
             }
         });
         loadingAnimImv = findViewById(R.id.loading_anim_imv);
@@ -156,7 +159,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 guideView.invalidate();
-                if (guideView.pageNum == 5) {
+                if (guideView.pageNum == 6) {
                     decorView.removeView(guideView);
                 }
             }
@@ -225,16 +228,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class GuideView extends View{
+    private class GuideView extends View {
         private Paint paint;
         private Rect rect;
         private RectF rectF;
         private int pageNum;
         private final int margin = 50;
-        private final String[] instructions = {"切换昼/夜壁纸",
-                "保存当前壁纸为日间壁纸", "保存当前壁纸为夜间壁纸", "停止服务按钮", "壁纸模式会跟随系统夜间模式切换"};
-        private final View[] views = {modeSwitch, saveDayButton, saveNightButton, stopButton};
+        private final String[] instructions = {"开/关后台跟随服务开关", "切换昼/夜壁纸",
+                "保存当前壁纸为日间壁纸", "保存当前壁纸为夜间壁纸", "开启跟随服务后", "壁纸模式将跟随系统夜间模式切换"};
+        private final View[] views = {serviceSwitch, modeSwitch, saveDayButton, saveNightButton};
         PorterDuffXfermode porterDuffXfermode;
+
         public GuideView(Context context) {
             super(context);
             paint = new Paint();
@@ -259,9 +263,9 @@ public class MainActivity extends Activity {
                 paint.setColor(Color.WHITE);
                 canvas.drawText(instructions[pageNum], margin, 2 * margin, paint);
 
-            } else if (pageNum < 5) {
+            } else if (pageNum < 6) {
                 paint.setColor(Color.WHITE);
-                canvas.drawText(instructions[pageNum], margin, getHeight()-margin, paint);
+                canvas.drawText(instructions[pageNum], margin, getHeight() - margin, paint);
             }
             pageNum++;
         }
